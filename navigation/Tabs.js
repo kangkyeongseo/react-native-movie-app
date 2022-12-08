@@ -10,6 +10,7 @@ import {
   LIGHT_GRAY_COLOR,
   YELLOW_COLOR,
 } from "../colors";
+import { Ionicons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
 
@@ -29,11 +30,39 @@ const Tabs = () => {
         headerTitleStyle: {
           color: isDark ? "white" : BLACK_COLOR,
         },
+        tabBarLabelStyle: {
+          marginTop: -5,
+          fontSize: 12,
+        },
       }}
     >
-      <Tab.Screen name="Movies" component={Movies} />
-      <Tab.Screen name="TV" component={Tv} />
-      <Tab.Screen name="Search" component={Search} />
+      <Tab.Screen
+        name="Movies"
+        component={Movies}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="film-outline" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="TV"
+        component={Tv}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="tv-outline" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Search"
+        component={Search}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="search-outline" color={color} size={size} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 };
