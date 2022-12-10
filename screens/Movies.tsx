@@ -22,6 +22,24 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = ({
 }) => {
   const [loading, setLoading] = useState(true);
   const [nowPlayingMovies, setNowPlayingMovies] = useState([]);
+  const [upComingMovies, setUpComingMovies] = useState([]);
+  const [trendingMovies, setTrendingMovies] = useState([]);
+  const getTrending = async () => {
+    const { results } = await (
+      await fetch(
+        `https://api.themoviedb.org/3/trending/movie/day?api_key=${API_KEY}`
+      )
+    ).json();
+    setTrendingMovies(results);
+  };
+  const getUpcoming = async () => {
+    const { results } = await (
+      await fetch(
+        `https://api.themoviedb.org/3/movie/upcoming?api_key=${API_KEY}&language=en-US&page=1&region=KR`
+      )
+    ).json();
+    setUpComingMovies(results);
+  };
   const getNowPlaying = async () => {
     const { results } = await (
       await fetch(
@@ -31,8 +49,13 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = ({
     setNowPlayingMovies(results);
     setLoading(false);
   };
+  const getData = async () => {
+    await Promise.all([getNowPlaying(), getUpcoming(), getTrending()]);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    getNowPlaying();
+    getData();
   }, []);
   return loading ? (
     <Loader>
