@@ -44,6 +44,36 @@ const Vote = styled.Text`
   font-size: 10px;
 `;
 
+const ListContainer = styled.View`
+  margin-bottom: 40px;
+`;
+
+const HMovie = styled.View`
+  padding: 0px 30px;
+  margin-bottom: 30px;
+  flex-direction: row;
+`;
+
+const HColumn = styled.View`
+  margin-left: 15px;
+  width: 80%;
+`;
+
+const OverView = styled.Text`
+  color: rgba(255, 255, 255, 0.8);
+  width: 80%;
+`;
+
+const Release = styled.Text`
+  color: white;
+  font-size: 12px;
+  margin: 10px 0px;
+`;
+
+const CommingSoonTitle = styled(ListTitle)`
+  margin-bottom: 30px;
+`;
+
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = ({
@@ -116,24 +146,53 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = ({
           />
         ))}
       </Swiper>
-      <ListTitle>Trending Movies</ListTitle>
-      <TrendingScroll
-        contentContainerStyle={{ paddingLeft: 30 }}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-      >
-        {trendingMovies.map((movie) => (
-          <Movie key={movie.id}>
+      <ListContainer>
+        <ListTitle>Trending Movies</ListTitle>
+        <TrendingScroll
+          contentContainerStyle={{ paddingLeft: 30 }}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+        >
+          {trendingMovies.map((movie) => (
+            <Movie key={movie.id}>
+              <Poster path={movie.poster_path} />
+              <Name>
+                {movie.original_title.length > 13
+                  ? `${movie.original_title.slice(0, 12)}...`
+                  : movie.original_title}
+              </Name>
+              <Vote>
+                {movie.vote_average > 0
+                  ? `⭐️${Math.round(movie.vote_average)}/10`
+                  : "Coming Soon"}
+              </Vote>
+            </Movie>
+          ))}
+        </TrendingScroll>
+      </ListContainer>
+      <ListContainer>
+        <CommingSoonTitle>Coming Soon</CommingSoonTitle>
+        {upComingMovies.map((movie) => (
+          <HMovie key={movie.id}>
             <Poster path={movie.poster_path} />
-            <Name>
-              {movie.original_title.length > 13
-                ? `${movie.original_title.slice(0, 12)}...`
-                : movie.original_title}
-            </Name>
-            <Vote>⭐️{movie.vote_average}/10</Vote>
-          </Movie>
+            <HColumn>
+              <Name>{movie.original_title}</Name>
+              <Release>
+                {new Date(movie.release_date).toLocaleDateString("ko", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </Release>
+              <OverView>
+                {movie.overview !== "" && movie.overview.length > 140
+                  ? `${movie.overview.slice(0, 140)}...`
+                  : movie.overview}
+              </OverView>
+            </HColumn>
+          </HMovie>
         ))}
-      </TrendingScroll>
+      </ListContainer>
     </ScrollView>
   );
 };
