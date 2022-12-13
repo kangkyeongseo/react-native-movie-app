@@ -4,6 +4,7 @@ import styled from "styled-components/native";
 import { makeImgPath } from "../utils";
 import { BlurView } from "expo-blur";
 import Poster from "./Poster";
+import Vote from "./Vote";
 
 const View = styled.View`
   flex: 1;
@@ -24,6 +25,7 @@ const Column = styled.View`
 `;
 
 const Title = styled.Text<{ isDark: boolean }>`
+  margin-bottom: 5px;
   font-size: 16px;
   font-weight: 600;
   color: ${(props) => (props.isDark ? "white" : props.theme.textColor)};
@@ -33,12 +35,6 @@ const Overview = styled.Text<{ isDark: boolean }>`
   margin-top: 5px;
   color: ${(props) =>
     props.isDark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.8)"};
-`;
-
-const Votes = styled(Overview)<{ isDark: boolean }>`
-  margin-top: 5px;
-  font-size: 12px;
-  letter-spacing: 1.5px;
 `;
 
 interface SlideProps {
@@ -72,9 +68,7 @@ const Slide: React.FC<SlideProps> = ({
           <Poster path={posterPath} />
           <Column>
             <Title isDark={isDark}>{originalTitle}</Title>
-            {voteAverage > 0 ? (
-              <Votes isDark={isDark}>⭐️{voteAverage}/10</Votes>
-            ) : null}
+            <Vote average={voteAverage} />
             <Overview isDark={isDark}>{overview.slice(0, 80)}...</Overview>
           </Column>
         </Wrapper>
