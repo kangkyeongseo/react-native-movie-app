@@ -4,7 +4,6 @@ import Poster from "./Poster";
 import Vote from "./Vote";
 
 const Media = styled.View`
-  margin-right: 15;
   align-items: center;
 `;
 

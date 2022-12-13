@@ -5,7 +5,6 @@ import Vote from "./Vote";
 
 const Media = styled.View`
   padding: 0px 30px;
-  margin-bottom: 30px;
   flex-direction: row;
 `;
 
