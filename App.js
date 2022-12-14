@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import AppLoading from "expo-app-loading";
 import * as Font from "expo-font";
 import { Ionicons } from "@expo/vector-icons";
 import { useAssets } from "expo-asset";
@@ -8,6 +7,9 @@ import Root from "./navigation/Root";
 import { useColorScheme } from "react-native";
 import { darkTheme, lightTheme } from "./styled";
 import { ThemeProvider } from "styled-components/native";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient();
 
 export default function App() {
   const [asset] = useAssets([require("./image.jpeg")]);
@@ -17,10 +19,12 @@ export default function App() {
     return;
   }
   return (
-    <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
-      <NavigationContainer>
-        <Root />
-      </NavigationContainer>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
+        <NavigationContainer>
+          <Root />
+        </NavigationContainer>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }
