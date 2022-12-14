@@ -6,7 +6,7 @@ import { ActivityIndicator, Dimensions, FlatList } from "react-native";
 import Slide from "../components/Slide";
 import VMedia from "../components/VMedia";
 import HMedia from "../components/HMedia";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { moviesApi } from "../api";
 
 const Loader = styled.View`
@@ -34,21 +34,26 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = ({
   navigation,
 }) => {
-  const [refreshing, setRefreshing] = useState(false);
-  const { isLoading: nowPlayingLoading, data: nowPlayingData } = useQuery(
-    "nowPlaying",
-    moviesApi.nowPlaying
-  );
-  const { isLoading: upcomingLoading, data: upcomimgData } = useQuery(
-    "upcoming",
-    moviesApi.upcoming
-  );
-  const { isLoading: trendingLoading, data: trendingData } = useQuery(
-    "trending",
-    moviesApi.trending
-  );
+  const queryClient = useQueryClient();
+  const {
+    isLoading: nowPlayingLoading,
+    data: nowPlayingData,
+    isRefetching: nowPlayingIsRefetching,
+  } = useQuery(["movies", "nowPlaying"], moviesApi.nowPlaying);
+  const {
+    isLoading: upcomingLoading,
+    data: upcomimgData,
+    isRefetching: upcomingIsRefetching,
+  } = useQuery(["movies", "upcoming"], moviesApi.upcoming);
+  const {
+    isLoading: trendingLoading,
+    data: trendingData,
+    isRefetching: trendingIsRefetching,
+  } = useQuery(["movies", "trending"], moviesApi.trending);
 
-  const onRefresh = async () => {};
+  const onRefresh = async () => {
+    queryClient.refetchQueries(["movies"]);
+  };
 
   const renderVMedia = ({ item }) => (
     <VMedia
@@ -75,6 +80,9 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = ({
   `;
   const movieKeyExtractor = (item) => item.id + "";
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
+  const refreshing =
+    nowPlayingIsRefetching || upcomingIsRefetching || trendingIsRefetching;
+
   return loading ? (
     <Loader>
       <ActivityIndicator />
