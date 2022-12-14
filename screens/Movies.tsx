@@ -78,11 +78,37 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = ({
   useEffect(() => {
     getData();
   }, []);
+
   const onRefresh = async () => {
     setRefreshing(true);
     await getData();
     setRefreshing(false);
   };
+
+  const renderVMedia = ({ item }) => (
+    <VMedia
+      posterPath={item.poster_path}
+      originalTitle={item.original_title}
+      voteAverage={item.vote_average}
+    />
+  );
+
+  const renderHMedia = ({ item }) => (
+    <HMedia
+      posterPath={item.poster_path}
+      originalTitle={item.original_title}
+      overview={item.overview}
+      releaseDate={item.release_date}
+    />
+  );
+
+  const VSeparator = styled.View`
+    width: 20px;
+  `;
+  const HSeparator = styled.View`
+    height: 30px;
+  `;
+  const movieKeyExtractor = (item) => item.id + "";
   return loading ? (
     <Loader>
       <ActivityIndicator />
@@ -122,33 +148,20 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = ({
             <FlatList
               data={trendingMovies}
               horizontal={true}
-              keyExtractor={(item) => item.id + ""}
+              keyExtractor={movieKeyExtractor}
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ paddingHorizontal: 30 }}
-              ItemSeparatorComponent={() => <View style={{ width: 20 }}></View>}
-              renderItem={({ item }) => (
-                <VMedia
-                  posterPath={item.poster_path}
-                  originalTitle={item.original_title}
-                  voteAverage={item.vote_average}
-                />
-              )}
+              ItemSeparatorComponent={VSeparator}
+              renderItem={renderVMedia}
             />
           </ListContainer>
           <CommingSoonTitle>Coming Soon</CommingSoonTitle>
         </>
       }
       data={upComingMovies}
-      keyExtractor={(item) => item.id + ""}
-      ItemSeparatorComponent={() => <View style={{ height: 20 }}></View>}
-      renderItem={({ item }) => (
-        <HMedia
-          posterPath={item.poster_path}
-          originalTitle={item.original_title}
-          overview={item.overview}
-          releaseDate={item.release_date}
-        />
-      )}
+      keyExtractor={movieKeyExtractor}
+      ItemSeparatorComponent={HSeparator}
+      renderItem={renderHMedia}
     />
   );
 };
