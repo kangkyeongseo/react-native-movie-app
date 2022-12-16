@@ -1,19 +1,15 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components/native";
 import Swiper from "react-native-swiper";
-import { ActivityIndicator, Dimensions, FlatList } from "react-native";
+import { Dimensions, FlatList } from "react-native";
 import Slide from "../components/Slide";
 import VMedia from "../components/VMedia";
 import HMedia from "../components/HMedia";
 import { useQuery, useQueryClient } from "react-query";
 import { MovieResponse, moviesApi } from "../api";
-
-const Loader = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-`;
+import Loader from "../components/Loader";
+import HList from "../components/HList";
 
 const ListTitle = styled.Text`
   margin-left: 30px;
@@ -67,9 +63,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = ({
     nowPlayingIsRefetching || upcomingIsRefetching || trendingIsRefetching;
 
   return loading ? (
-    <Loader>
-      <ActivityIndicator />
-    </Loader>
+    <Loader />
   ) : upcomingData ? (
     <FlatList
       onRefresh={onRefresh}
@@ -100,26 +94,9 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = ({
               />
             ))}
           </Swiper>
-          <ListContainer>
-            <ListTitle>Trending Movies</ListTitle>
-            {trendingData ? (
-              <FlatList
-                data={trendingData.results}
-                horizontal={true}
-                keyExtractor={(item) => item.id + ""}
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ paddingHorizontal: 30 }}
-                ItemSeparatorComponent={VSeparator}
-                renderItem={({ item }) => (
-                  <VMedia
-                    posterPath={item.poster_path || ""}
-                    originalTitle={item.original_title}
-                    voteAverage={item.vote_average}
-                  />
-                )}
-              />
-            ) : null}
-          </ListContainer>
+          {trendingData ? (
+            <HList title={"Trending Movies"} data={trendingData?.results} />
+          ) : null}
           <CommingSoonTitle>Coming Soon</CommingSoonTitle>
         </>
       }
