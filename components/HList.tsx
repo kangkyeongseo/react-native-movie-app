@@ -1,5 +1,6 @@
 import React from "react";
-import { FlatList } from "react-native";
+import { FlatList, Image } from "react-native";
+import { initialWindowMetrics } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 import { Movie, Tv } from "../api";
 import VMedia from "./VMedia";
@@ -23,30 +24,47 @@ export const HListSeparator = styled.View`
 interface HListProps {
   title: string;
   data: Movie[] | Tv[];
+  [key: string]: any;
 }
 
-const HList: React.FC<HListProps> = ({ title, data }) => (
-  <ListContainer>
-    <ListTitle>{title}</ListTitle>
-    <FlatList
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      data={data}
-      ItemSeparatorComponent={HListSeparator}
-      contentContainerStyle={{ paddingHorizontal: 30 }}
-      keyExtractor={(item) => item.id + ""}
-      renderItem={({ item }) => (
-        <VMedia
-          posterPath={item.poster_path || ""}
-          originalTitle={
-            "original_title" in item ? item.original_title : item.original_name
-          }
-          voteAverage={item.vote_average}
-          fullData={item}
-        />
-      )}
-    />
-  </ListContainer>
-);
+const HList: React.FC<HListProps> = ({
+  title,
+  data,
+  hasNextPage,
+  fetchNextPage,
+}) => {
+  const loadMore = () => {
+    if (hasNextPage) {
+      fetchNextPage();
+    }
+  };
+  return (
+    <ListContainer>
+      <ListTitle>{title}</ListTitle>
+      <FlatList
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.5}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        data={data}
+        ItemSeparatorComponent={HListSeparator}
+        contentContainerStyle={{ paddingHorizontal: 30 }}
+        keyExtractor={(item, index) => item.id + index}
+        renderItem={({ item }) => (
+          <VMedia
+            posterPath={item.poster_path || ""}
+            originalTitle={
+              "original_title" in item
+                ? item.original_title
+                : item.original_name
+            }
+            voteAverage={item.vote_average}
+            fullData={item}
+          />
+        )}
+      />
+    </ListContainer>
+  );
+};
 
 export default HList;
